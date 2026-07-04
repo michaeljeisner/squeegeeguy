@@ -33,10 +33,14 @@ def can_send_today() -> bool:
     return db.get_daily_send_count() < get_today_limit()
 
 
-def send_email(to: str, subject: str, body: str, add_footer: bool = True) -> str:
+def send_email(to: str, subject: str, body: str, add_footer: bool = True,
+               in_reply_to: str | None = None,
+               ics_content: str | None = None) -> str:
     """
     Send one email. Returns the Message-ID string.
     CAN-SPAM compliant: physical address, unsubscribe instruction, List-Unsubscribe header.
+    Pass `in_reply_to` (a prior Message-ID) to thread replies/follow-ups.
+    Pass `ics_content` to attach a calendar invite (invite.ics).
     Opens a fresh SMTP connection per call.
     """
     if add_footer:
@@ -51,9 +55,21 @@ def send_email(to: str, subject: str, body: str, add_footer: bool = True) -> str
     msg["Date"] = formatdate(localtime=True)
     msg_id = make_msgid(domain=BUSINESS.sending_domain or "squeegeeguy.com")
     msg["Message-ID"] = msg_id
+    if in_reply_to:
+        msg["In-Reply-To"] = in_reply_to
+        msg["References"] = in_reply_to
     msg["List-Unsubscribe"] = f"<mailto:{SEND.from_email}?subject=unsubscribe>"
     msg["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
     msg.set_content(full_body)
+
+    if ics_content:
+        msg.add_attachment(
+            ics_content.encode("utf-8"),
+            maintype="text",
+            subtype="calendar",
+            filename="invite.ics",
+            params={"method": "PUBLISH", "name": "invite.ics"},
+        )
 
     with smtplib.SMTP(SEND.smtp_host, SEND.smtp_port) as smtp:
         smtp.ehlo()

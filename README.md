@@ -1,307 +1,271 @@
-# SqueegeeGuy Lead-Gen
+# Squeegee Guy Lead-Gen + Appointment Setting
 
-Every morning at 7 AM, this system automatically:
+This system finds new customers, emails them, answers their replies, and **books
+jobs onto your calendar — automatically**. You wake up to appointments that are
+already set.
 
-1. Searches Google for commercial businesses in Tucson (restaurants, dental offices, car dealerships, hotels, etc.)
-2. Finds their contact email addresses
-3. Has AI score each business on how good a fit they are for window cleaning or pressure washing
-4. Has AI write a personalized cold email for every good prospect
-5. Sends those emails from your business address
-6. Emails **you** a daily summary of everything it did
+What it does, all day, every day:
 
-You wake up to a digest in your inbox telling you who it reached out to, who scored highest, and whether anyone replied.
+1. **7:00 AM — daily pipeline.** Searches Google for Tucson businesses
+   (restaurants, dental offices, dealerships, hotels…), finds their email
+   addresses, has AI score each one, writes a personalized cold email for every
+   good prospect, and sends them (with polite follow-ups a few days later if
+   nobody answers).
+2. **Every 15 minutes — the booking agent.** Checks the inbox. When a prospect
+   replies, AI answers *as you*: it answers questions, offers real open time
+   slots from your calendar, and when they pick one it **books the appointment**,
+   emails them a confirmation with a calendar invite (.ics), and emails you the
+   same invite so it lands on your calendar.
+3. **Website leads too.** The new website's quote form feeds the same system —
+   form submitters get an instant reply that already offers open time slots.
+4. **Daily digest.** Every morning you get one email: jobs booked in the last
+   24 hours (on top), upcoming appointments, who was contacted, top prospects,
+   and any errors.
+
+Anything sensitive — pricing negotiation, complaints, big complex jobs — is
+**escalated to you** instead of auto-answered. Anyone who says "stop" is
+suppressed forever, automatically.
 
 ---
 
 ## Before You Start: What You Need
 
-You'll need accounts and API keys from three services. All are either free or very cheap.
-
 | What | Cost | Why |
 |---|---|---|
-| Google Workspace email (`@gosqueegeeguy.com`) | ~$6/mo | Sends the outreach emails and receives replies |
+| Google Workspace email (`@gosqueegeeguy.com`) | ~$6/mo | Sends outreach and receives replies |
 | Google Places API key | Free (up to ~5,000 searches/month) | Finds businesses in Tucson |
-| Anthropic API key | ~$5–15/mo depending on volume | AI that scores leads and writes emails |
+| Anthropic API key | ~$5–15/mo | AI that scores leads, writes emails, and books appointments |
 
-> **Important:** Do NOT use a personal Gmail to send cold outreach. You need an email on your own domain (like `michael@gosqueegeeguy.com`) so emails don't land in spam and your domain reputation stays clean.
+> **Important:** Do NOT use a personal Gmail for cold outreach. Use an address
+> on your own sending domain (like `chip@gosqueegeeguy.com`) so email lands in
+> inboxes and your main domain's reputation stays clean.
 
 ---
 
 ## One-Time Setup
 
-### Step 1 — Install Python and uv
+### Step 1 — Install uv
 
-Open Terminal (press `Cmd + Space`, type "Terminal", hit Enter).
-
-Paste this and hit Enter:
+Open Terminal (`Cmd + Space`, type "Terminal", Enter) and paste:
 ```
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
-
-Close Terminal and reopen it. Verify it worked:
-```
-uv --version
-```
-You should see a version number like `uv 0.5.x`.
-
----
+Close and reopen Terminal, then check: `uv --version`
 
 ### Step 2 — Download this project
 
 ```
-cd ~/Dev/Projects
 git clone https://github.com/michaeljeisner/squeegeeguy.git
 cd squeegeeguy
 uv sync
 ```
 
----
-
 ### Step 3 — Get your API keys
 
 **Google Places API key:**
-1. Go to https://console.cloud.google.com
-2. Create a new project called "SqueegeeGuy"
-3. Go to **APIs & Services → Enable APIs** and enable **Places API (New)**
-4. Go to **APIs & Services → Credentials → Create Credentials → API Key**
-5. Copy the key — it looks like `AIzaSy...`
+1. https://console.cloud.google.com → new project "SqueegeeGuy"
+2. APIs & Services → Enable **Places API (New)**
+3. Credentials → Create Credentials → API Key (looks like `AIzaSy...`)
 
 **Anthropic API key:**
-1. Go to https://console.anthropic.com
-2. Sign up / log in
-3. Go to **API Keys → Create Key**
-4. Copy the key — it looks like `sk-ant-...`
-5. Add $10 in credits under **Billing** — that'll last several months
+1. https://console.anthropic.com → API Keys → Create Key (`sk-ant-...`)
+2. Add $10 in credits under Billing
 
 **Google Workspace App Password** (for sending email):
-1. Log into your `@gosqueegeeguy.com` Google account at https://myaccount.google.com
-2. Go to **Security → 2-Step Verification** and make sure it's turned on
-3. Go to **Security → App Passwords**
-4. Create a new app password for "Mail" → "Mac"
-5. Copy the 16-character password it gives you
-
----
+1. Log into your `@gosqueegeeguy.com` account at https://myaccount.google.com
+2. Security → turn ON 2-Step Verification
+3. Security → App Passwords → create one for "Mail" → copy the 16-char password
 
 ### Step 4 — Create your secrets file
 
-In Terminal, from the project folder:
 ```
 cp .env.example .env
 open -e .env
 ```
 
-This opens a plain text file. Fill in every blank line:
+Fill in every blank line — API keys, the app password, and your business
+details (`OWNER_NAME`, `BUSINESS_PHONE`, `BUSINESS_ADDRESS`).
 
-```
-ANTHROPIC_API_KEY=sk-ant-your-key-here
-GOOGLE_PLACES_API_KEY=AIzaSy-your-key-here
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=michael@gosqueegeeguy.com
-SMTP_PASSWORD=your-16-char-app-password
-IMAP_HOST=imap.gmail.com
-IMAP_USER=michael@gosqueegeeguy.com
-IMAP_PASSWORD=your-16-char-app-password
-OWNER_EMAIL=michael@squeegeeguy.com
-```
+> **BUSINESS_ADDRESS is legally required** on every cold email (CAN-SPAM Act).
+> A P.O. box or UPS Store address is fine.
 
-Save and close the file. **Never share this file or commit it to GitHub — it contains your passwords.**
+**Never share `.env` or commit it to GitHub — it contains your passwords.**
 
----
+### Step 5 — Set your working hours
 
-### Step 5 — Fill in your business details
-
-Open `config.py` in a text editor and update the `BusinessProfile` section at the top:
+Open `config.py` and check the `AvailabilityConfig` section. This is the
+calendar the booking agent offers to prospects:
 
 ```python
-@dataclass(frozen=True)
-class BusinessProfile:
-    name: str = "SqueegeeGuy"
-    owner_name: str = "Michael"
-    ...
-    phone: str = "(520) 555-0000"          # ← your real phone number
-    website: str = "https://squeegeeguy.com"
-    physical_address: str = "123 Your St, Tucson, AZ 85701"  # ← required by law (CAN-SPAM)
-    sending_domain: str = "gosqueegeeguy.com"                # ← your sending domain
+workdays: tuple[int, ...] = (0, 1, 2, 3, 4, 5)  # Mon–Sat (Sunday off)
+day_start_hour: int = 8      # earliest appointment
+day_end_hour: int = 17       # latest end time
+slot_minutes: int = 120      # length of a job block
+min_notice_hours: int = 18   # never book sooner than this
 ```
 
-> **The physical address is legally required** on every cold email you send (CAN-SPAM Act). It doesn't have to be your home — a P.O. box or UPS Store address works fine.
-
----
-
-### Step 6 — Do a dry run (no emails sent)
-
-This runs the full pipeline but doesn't actually send anything. Good way to make sure everything is connected before going live.
+### Step 6 — Dry run (nothing is sent)
 
 ```
-cd ~/Dev/Projects/squeegeeguy
 uv run python run.py --dry-run
 ```
 
-You'll see output like:
-```
-[run] Step 1: Prospecting...
-[prospect] restaurants: 20 found, 20 new
-[prospect] car dealerships: 18 found, 18 new
-...
-[run] Step 2: Enriching...
-[run] Step 3: Scoring...
-[run] Step 4: Drafting...
---- DRY RUN EMAIL ---
-To: info@somerestaurant.com
-Subject: Quick question about your windows
-...
-[run] Done in 142.3s
-      prospects=280 enriched=87 scored=62 drafted=45 sent=0
-```
-
-Check the drafted emails look good. If anything looks off, let your developer know before going live.
-
----
-
-### Step 7 — Schedule it to run every morning
-
-This installs the daily 7 AM job:
+Check the drafted emails look right. Also sanity-check your open slots:
 
 ```
-bash setup.sh
+uv run python appointments.py
 ```
 
-That's it. It will now run automatically every morning while your Mac is on and awake.
+### Step 7 — Test SMTP, then go live
+
+```
+uv run python send.py        # sends one test email to OWNER_EMAIL
+bash setup.sh                # installs both scheduled jobs
+```
+
+`setup.sh` installs two background jobs that run while your Mac is on:
+- **7:00 AM daily** — the full lead-gen pipeline
+- **Every 15 minutes** — the reply/booking agent
 
 ---
 
 ## Daily Usage
 
-### Your morning digest
+Honestly? Read the morning digest, show up to the jobs, and reply to the
+escalation emails. That's it.
 
-Every morning after the pipeline runs, you'll get an email at `michael@squeegeeguy.com` with a subject like:
+### The morning digest
+
+Subject: `SqueegeeGuy Daily Digest — 2026-07-15`. Jobs booked in the last 24
+hours are at the top, then upcoming appointments, then pipeline stats.
+
+### When someone replies to an outreach email
+
+- **Interested / has questions:** The AI answers within 15 minutes, offering
+  open time slots from your calendar. Back-and-forth continues automatically.
+- **They pick a time:** Appointment is booked. They get a confirmation with a
+  calendar invite; you get an alert email **plus the same .ics invite** — open
+  it to add the job to your calendar.
+- **Pricing haggling, complaints, complex jobs:** Escalated to you. Reply from
+  your own inbox; the AI stops touching that thread (it caps itself at 4
+  auto-replies per lead anyway).
+- **"Not interested" / "Stop":** Suppressed automatically, follow-ups
+  cancelled. They will never be contacted again.
+
+### Website quote form
+
+The new site is in `site/index.html`. Its form POSTs to the inbound receiver:
 
 ```
-SqueegeeGuy Daily Digest — 2025-07-15
+uv run python inbound.py     # listens on port 8765
 ```
 
-It tells you:
-- How many businesses were found and emailed
-- The top-scoring prospects (restaurants, dental offices, etc.)
-- Exactly which emails went out and to whom
-- Any errors if something went wrong
-
-### When someone replies
-
-If a prospect replies to an outreach email:
-- **Interested or has a question:** You'll get an instant alert email with their message and contact info. Reply directly from your email client — it threads naturally.
-- **"Not interested" or "Stop":** The system handles it automatically. They're added to a do-not-contact list and won't hear from you again.
+To use it in production, host `site/index.html` anywhere (Cloudflare Pages,
+Netlify, your current host) and point `QUOTE_ENDPOINT` at a public URL for the
+inbound server (Cloudflare Tunnel or Tailscale Funnel work well on a Mac). If
+the endpoint is ever unreachable, the form falls back to opening a pre-filled
+email to you — no lead is lost.
 
 ### Checking the database
 
-If you want to see what's in the system, you can download [DB Browser for SQLite](https://sqlitebrowser.org) (free) and open `squeegeeguy.db`. The `leads` table has every prospect; `outreach` has every email sent.
+Download [DB Browser for SQLite](https://sqlitebrowser.org) (free) and open
+`squeegeeguy.db`:
+- `leads` — every prospect and their status
+- `outreach` — every email drafted/sent
+- `conversations` — full reply threads
+- `appointments` — every booked job
 
 ---
 
 ## Adjusting How It Behaves
 
-All settings are in `config.py`. The most useful ones:
+All settings are in `config.py`:
 
-**Change the minimum score to target (default: 60 out of 100):**
+**Minimum score to email (default 60):** `min_fit_score: int = 60`
+
+**Daily send limits (warmup — don't rush this):**
 ```python
-min_fit_score: int = 60   # raise to 75 to only email the best prospects
+warmup_schedule = {1: 5, 2: 10, 3: 20, 4: 30, 5: 50}   # week: emails/day
 ```
 
-**Change how many emails it sends per day (warmup schedule):**
-```python
-warmup_schedule: dict[int, int] = {
-    1: 5,    # Week 1: max 5/day
-    2: 10,   # Week 2: max 10/day
-    3: 20,   # Week 3: max 20/day
-    4: 30,   # Week 4: max 30/day
-    5: 50,   # Week 5+: max 50/day
-}
-```
-Start slow. Jumping straight to 50/day from a new email address will get you flagged as spam.
+**Business categories to target:** edit the `categories` tuple.
 
-**Add or remove business categories to target:**
-```python
-categories: tuple[str, ...] = (
-    "restaurants",
-    "car dealerships",
-    # add more here, or remove ones you don't want
-)
-```
+**Follow-up timing:** `followup_delays_days = (3, 7)` — days after the initial
+email. Follow-ups are cancelled instantly if the prospect replies.
 
 ---
 
 ## Manually Blocking Someone
 
-If you ever want to make sure a specific email address never gets contacted again:
-
 ```
-cd ~/Dev/Projects/squeegeeguy
 uv run python -c "import db; db.add_suppression('someone@example.com', 'manual')"
 ```
 
----
-
 ## Stopping and Starting
 
-**Pause the daily job** (it won't run until you re-enable it):
 ```
+# Pause everything
 launchctl unload ~/Library/LaunchAgents/com.squeegeeguy.leadgen.plist
-```
+launchctl unload ~/Library/LaunchAgents/com.squeegeeguy.replies.plist
 
-**Re-enable it:**
-```
+# Resume
 launchctl load ~/Library/LaunchAgents/com.squeegeeguy.leadgen.plist
+launchctl load ~/Library/LaunchAgents/com.squeegeeguy.replies.plist
+
+# Run right now
+uv run python run.py          # full pipeline
+uv run python checkin.py      # just check replies / book appointments
+
+# Logs
+tail -f /tmp/com.squeegeeguy.leadgen.log /tmp/com.squeegeeguy.replies.log
+cat /tmp/com.squeegeeguy.leadgen.err /tmp/com.squeegeeguy.replies.err
 ```
 
-**Run it manually right now:**
+## Tests
+
 ```
-cd ~/Dev/Projects/squeegeeguy
-uv run python run.py
+uv run python test_core.py
 ```
 
-**Check the logs from the last run:**
-```
-cat /tmp/squeegeeguy-leadgen.log
-cat /tmp/squeegeeguy-leadgen.err
-```
+Covers follow-up due dates, reply-cancels-followups, suppression, slot
+generation, double-booking prevention, working-hours validation, and .ics
+generation. Runs against a temp database — never touches your real data.
 
 ---
 
 ## Troubleshooting
 
-**"No emails sent today"**
-The warmup limit was hit. Normal behavior — it will send more as the weeks go on.
+**"No emails sent today"** — warmup limit hit; normal, grows weekly.
 
-**"SMTP authentication failed"**
-Your App Password is wrong or expired. Go back to Step 3 and create a new one, then update `.env`.
+**"SMTP authentication failed"** — App Password wrong/expired. Make a new one,
+update `.env`.
 
-**"Google Places API error"**
-Check that your Places API key is correct and the Places API (New) is enabled in Google Cloud Console.
+**"Google Places API error"** — check the key and that Places API (New) is
+enabled.
 
-**Emails landing in spam**
-This is normal for the first week or two on a new domain. Make sure you have SPF, DKIM, and DMARC records set up on `gosqueegeeguy.com` — ask your developer or Google "how to set up email authentication for Google Workspace."
+**Emails landing in spam** — normal for a new domain's first week or two. Set
+up SPF, DKIM, and DMARC on your sending domain (Google "email authentication
+for Google Workspace").
 
-**Something else broke**
-Check the error log:
-```
-cat /tmp/squeegeeguy-leadgen.err
-```
-Copy the error and send it to your developer.
+**Booking agent replied something odd** — every auto-reply is logged in the
+`conversations` table. It escalates to you when unsure and hard-caps at 4
+auto-replies per lead. Adjust the cap via `max_auto_replies_per_lead` in
+`config.py`.
+
+**Something else broke** — `cat /tmp/com.squeegeeguy.*.err` and send the error
+to your developer.
 
 ---
 
 ## Legal Notes
 
-This system is designed to comply with the **CAN-SPAM Act**:
-- Every email includes your physical mailing address
-- Every email has an unsubscribe instruction ("Reply STOP")
-- Unsubscribe requests are honored immediately and automatically
+Designed to comply with the **CAN-SPAM Act**:
+- Every cold email includes your physical mailing address
+- Every cold email has an unsubscribe instruction ("Reply STOP")
+- Unsubscribes are honored immediately and automatically
 - No deceptive subject lines
 
-You are responsible for ensuring your business address in `config.py` is accurate and current. If you move, update it.
-
----
+Keep `BUSINESS_ADDRESS` in `.env` accurate. If you move, update it.
 
 ## Cost Summary
 

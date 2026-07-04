@@ -28,6 +28,33 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _send_one(outreach: dict, log: dict, *, in_reply_to: str | None = None) -> bool:
+    """Send a single outreach row. Returns True on success."""
+    if db.is_suppressed(outreach["email"]):
+        db.mark_failed(outreach["id"], "suppressed")
+        print(f"[send] Suppressed: {outreach['email']}")
+        return False
+    try:
+        msg_id = send.send_email(
+            outreach["email"], outreach["subject"], outreach["body"],
+            in_reply_to=in_reply_to,
+        )
+        db.mark_sent(outreach["id"], msg_id)
+        db.log_conversation(
+            outreach["lead_id"], "outbound",
+            outreach["subject"], outreach["body"], msg_id,
+        )
+        log["sent"] += 1
+        print(f"[send] Sent to {outreach['email']} (step: {outreach['step']})")
+        time.sleep(random.uniform(*SEND.inter_email_delay_range))
+        return True
+    except Exception as e:
+        db.mark_failed(outreach["id"], str(e))
+        log["errors"].append(f"send/{outreach['email']}: {e}")
+        print(f"[send] ERROR {outreach['email']}: {e}", file=sys.stderr)
+        return False
+
+
 def main() -> None:
     args = parse_args()
     start_time = time.monotonic()
@@ -42,7 +69,7 @@ def main() -> None:
         "dry_run": args.dry_run,
     }
 
-    # Optional: Phase 2 — check replies first (replies.py must exist)
+    # 0. Handle replies / bookings first — replies always take priority over new outreach
     try:
         import replies
         replies.check_replies()
@@ -113,39 +140,32 @@ def main() -> None:
 
     print(f"[run] Drafted: {log['drafted']}")
 
-    # 5. Send
+    # 5. Send (follow-ups first — they're warmer — then new initial outreach)
     if args.dry_run:
         print("[run] Step 5: SKIPPED (dry run)")
-        # Log drafts to stdout so the owner can review
         pending = db.get_pending_outreach(limit=5)
         for o in pending:
             send.send_email_dry_run(o["email"], o["subject"], o["body"])
     else:
         print("[run] Step 5: Sending...")
-        if not send.can_send_today():
+        remaining = send.get_today_limit() - db.get_daily_send_count()
+        if remaining <= 0:
             print(f"[send] Daily warmup limit reached ({send.get_today_limit()}). Skipping sends.")
         else:
-            remaining = send.get_today_limit() - db.get_daily_send_count()
-            pending = db.get_pending_outreach(limit=remaining)
-            for outreach in pending:
-                if db.is_suppressed(outreach["email"]):
-                    db.mark_failed(outreach["id"], "suppressed")
-                    print(f"[send] Suppressed: {outreach['email']}")
-                    continue
-                try:
-                    msg_id = send.send_email(outreach["email"], outreach["subject"], outreach["body"])
-                    db.mark_sent(outreach["id"], msg_id)
-                    db.update_lead(outreach["lead_id"], status="sent")
-                    log["sent"] += 1
-                    print(f"[send] Sent to {outreach['email']} (step: {outreach['step']})")
-                    delay = random.uniform(*SEND.inter_email_delay_range)
-                    time.sleep(delay)
-                except Exception as e:
-                    db.mark_failed(outreach["id"], str(e))
-                    log["errors"].append(f"send/{outreach['email']}: {e}")
-                    print(f"[send] ERROR {outreach['email']}: {e}", file=sys.stderr)
+            followups = db.get_due_followups(SEND.followup_delays_days, limit=remaining)
+            for o in followups:
+                thread_id = o.get("initial_message_id") or db.get_last_message_id(o["lead_id"])
+                if _send_one(o, log, in_reply_to=thread_id):
+                    remaining -= 1
+                if remaining <= 0:
+                    break
+            if remaining > 0:
+                pending = db.get_pending_outreach(limit=remaining)
+                for outreach in pending:
+                    if _send_one(outreach, log):
+                        db.update_lead(outreach["lead_id"], status="sent")
 
-    # Optional: Phase 3 — intent signals
+    # Optional: intent signals
     try:
         import listen
         new_signals = listen.check_signals()

@@ -50,17 +50,31 @@ def handle_quote_submission(data: dict) -> None:
     # Insert into DB
     lead_id = _insert_inbound_lead(data)
 
-    # Auto-acknowledgment to the requester
+    # Auto-acknowledgment to the requester — offer real open slots right away
+    try:
+        import appointments
+        slots = appointments.get_free_slots(count=3)
+    except Exception:
+        slots = []
+    slot_lines = "".join(f"  • {s['label']}\n" for s in slots)
+    slot_offer = (
+        f"\nI have these openings coming up:\n{slot_lines}\n"
+        "Just reply with the one that works and I'll lock it in.\n"
+        if slots else "\n"
+    )
+
     ack_subject = f"Got your quote request — {BUSINESS.name} will be in touch!"
     ack_body = (
         f"Hi {name},\n\n"
         f"Thanks for reaching out to {BUSINESS.name}! We received your request"
-        f"{' for ' + service if service else ''} and will get back to you shortly.\n\n"
+        f"{' for ' + service if service else ''} and will get back to you shortly.\n"
+        f"{slot_offer}\n"
         f"You can also reach us at {BUSINESS.phone or 'our website'}.\n\n"
-        f"Talk soon,\nMichael\n{BUSINESS.name}"
+        f"Talk soon,\n{BUSINESS.owner_name}\n{BUSINESS.name}"
     )
     try:
         send.send_email(email_addr, ack_subject, ack_body, add_footer=False)
+        db.log_conversation(lead_id, "outbound", ack_subject, ack_body)
     except Exception as e:
         print(f"[inbound] Failed to send ack to {email_addr}: {e}")
 

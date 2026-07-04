@@ -1,9 +1,12 @@
 import time
 import json
 import anthropic
+from typing import TypeVar
 from pydantic import BaseModel
 
 client = anthropic.Anthropic()
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class LeadScore(BaseModel):
@@ -29,13 +32,26 @@ class ReplyClassification(BaseModel):
     urgent: bool
 
 
+class BookingAction(BaseModel):
+    """Decision made by the booking agent for one inbound reply."""
+    action: str            # "reply" | "book" | "escalate" | "unsubscribe" | "ignore"
+    summary: str           # one-line summary of the prospect's message
+    reply_subject: str = ""
+    reply_body: str = ""   # the email to send back (for "reply" and "book")
+    # For action == "book": which slot they agreed to (must be one of the offered slots)
+    slot_starts_at: str = ""   # "YYYY-MM-DDTHH:MM"
+    slot_ends_at: str = ""
+    service: str = ""          # what they want done
+    urgent: bool = False
+
+
 def structured_call(
     model: str,
     system: str,
     user: str,
-    output_type: type[BaseModel],
+    output_type: type[T],
     max_tokens: int = 1024,
-) -> BaseModel:
+) -> T:
     """
     Call Claude with structured output via tool-use extraction.
     Retries once on rate-limit or connection error.
@@ -53,7 +69,7 @@ def structured_call(
         }
     ]
 
-    def _call() -> BaseModel:
+    def _call() -> T:
         response = client.messages.create(
             model=model,
             max_tokens=max_tokens,

@@ -51,8 +51,27 @@ def build_digest_body(run_stats: dict) -> str:
 
     top = _top_prospects()
     sent_today = _sent_today()
+    booked = db.get_appointments_booked_since(hours=24)
+    upcoming = db.get_upcoming_appointments()
 
-    lines = [
+    lines = []
+
+    if booked:
+        lines.append("🎉 NEW JOBS BOOKED (last 24h)")
+        for a in booked:
+            when = a["starts_at"].replace("T", " ")
+            lines.append(f"  • {when} — {a['lead_name']} ({a.get('service') or 'service visit'})")
+            lines.append(f"    {a.get('location') or 'location TBD'} | {a.get('lead_email') or ''} {a.get('lead_phone') or ''}")
+        lines.append("")
+
+    if upcoming:
+        lines.append("UPCOMING APPOINTMENTS")
+        for a in upcoming[:10]:
+            when = a["starts_at"].replace("T", " ")
+            lines.append(f"  • {when} — {a['lead_name']} ({a.get('service') or 'service visit'})")
+        lines.append("")
+
+    lines += [
         f"TODAY'S RUN{' (DRY)' if dry else ''}",
         dry_note,
         f"  New prospects found:    {prospects_found}",

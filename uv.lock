@@ -444,6 +444,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },
+    { name = "feedparser" },
     { name = "httpx" },
     { name = "pydantic" },
     { name = "python-dotenv" },
@@ -451,14 +452,13 @@ dependencies = [
 
 [package.optional-dependencies]
 listen = [
-    { name = "feedparser" },
     { name = "praw" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "anthropic", specifier = ">=0.111.0" },
-    { name = "feedparser", marker = "extra == 'listen'", specifier = ">=6.0" },
+    { name = "feedparser", specifier = ">=6.0" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "praw", marker = "extra == 'listen'", specifier = ">=7.7" },
     { name = "pydantic", specifier = ">=2.11" },

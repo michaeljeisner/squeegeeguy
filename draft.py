@@ -1,11 +1,11 @@
 import sys
 import db
 import llm
-from config import LLM
+from config import BUSINESS, LLM
 
-DRAFTING_SYSTEM_PROMPT = """You are writing a short, personalized cold email for SqueegeeGuy, a professional window
-cleaning and pressure washing service in Tucson, AZ. The email goes to a local business owner
-or manager.
+DRAFTING_SYSTEM_PROMPT = f"""You are writing a short, personalized cold email for {BUSINESS.name}, a professional window
+cleaning and pressure washing service in Tucson, AZ, owned by {BUSINESS.owner_name}. The email goes
+to a local business owner or manager, written in first person as {BUSINESS.owner_name}.
 
 Rules:
 - Keep the initial email under 120 words. Follow-ups under 80 words each.
