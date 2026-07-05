@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Squeegee Guy | Window Cleaning & Pressure Washing in Tucson, AZ</title>
-  <meta name="description" content="Tucson's trusted window cleaning and pressure washing pro. Residential & commercial. Hard water stain removal, 5-star rated, licensed & insured. Book online in 60 seconds — (520) 580-5700." />
-  <meta property="og:title" content="Squeegee Guy — Tucson Window Cleaning & Pressure Washing" />
+  <meta name="description" content="Tucson's trusted window cleaning and pressure washing pro. Residential & commercial. Hard water stain removal, 5-star rated, licensed & insured. Book online in 60 seconds, or call (520) 580-5700." />
+  <meta property="og:title" content="Squeegee Guy | Tucson Window Cleaning & Pressure Washing" />
   <meta property="og:description" content="Crystal-clear windows, desert-tested methods, 100% satisfaction guarantee. Book your free quote online." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://squeegeeguy.com/" />
@@ -36,6 +36,7 @@
       --ink: #16222e;
       --muted: #5b6b7a;
       --line: #dde6ee;
+      --slate: #64748b;
       --radius: 14px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,7 +47,13 @@
     }
     img { max-width: 100%; }
     a { color: inherit; }
+    svg.icon {
+      width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em; flex-shrink: 0;
+      fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    }
+    svg.icon.icon-fill { fill: currentColor; stroke: none; }
     .wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+    section[id] { scroll-margin-top: 88px; }
     .section-label {
       font-size: .78rem; font-weight: 800; letter-spacing: .12em;
       text-transform: uppercase; color: var(--blue); margin-bottom: .5rem;
@@ -54,8 +61,19 @@
     .section-title {
       font-size: clamp(1.7rem, 3.4vw, 2.5rem); font-weight: 800;
       color: var(--navy); line-height: 1.2; margin-bottom: .75rem;
+      text-wrap: balance;
     }
     .section-sub { color: var(--muted); max-width: 640px; margin-bottom: 2.5rem; }
+    .btn:focus-visible, .nav-links a:focus-visible, .brand:focus-visible, .chip:focus-visible {
+      outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 6px;
+    }
+    .form-submit:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+    summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .tier:hover, .btn-amber:hover { transform: none; }
+      * { transition-duration: .01ms !important; }
+    }
 
     /* Top bar */
     .topbar {
@@ -64,6 +82,8 @@
       align-items: center; gap: 1rem; flex-wrap: wrap;
     }
     .topbar a { color: #fff; font-weight: 700; text-decoration: none; }
+    .topbar span { display: inline-flex; align-items: center; gap: .4rem; }
+    .topbar svg.icon { color: var(--amber); }
 
     /* Nav */
     nav {
@@ -80,6 +100,7 @@
       background: linear-gradient(135deg, var(--blue) 0%, #3b9ae8 100%);
       display: grid; place-items: center; color: #fff; font-size: 1.25rem;
     }
+    .brand-mark svg.icon { width: 20px; height: 20px; }
     .brand-name { font-weight: 800; font-size: 1.2rem; color: var(--navy); }
     .brand-name span { color: var(--blue); }
     .nav-links { display: flex; gap: 1.5rem; align-items: center; }
@@ -95,8 +116,8 @@
     /* Hero */
     .hero {
       background:
-        radial-gradient(900px 420px at 85% -10%, rgba(59,154,232,.25), transparent),
-        linear-gradient(160deg, var(--navy) 0%, #0e3a63 55%, var(--blue) 100%);
+        radial-gradient(900px 420px at 85% -10%, rgba(59,154,232,.15), transparent),
+        linear-gradient(160deg, var(--navy) 0%, #0c3357 55%, var(--blue) 100%);
       color: #fff; padding: 5rem 0 4.5rem; position: relative; overflow: hidden;
     }
     .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; }
@@ -107,9 +128,9 @@
       padding: .35rem .9rem; border-radius: 999px; font-size: .85rem; font-weight: 600;
       margin-bottom: 1.25rem;
     }
-    .hero h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); font-weight: 850; line-height: 1.12; margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); font-weight: 850; line-height: 1.12; margin-bottom: 1rem; text-wrap: balance; }
     .hero h1 em { font-style: normal; color: #ffd77a; }
-    .hero p.lead { font-size: 1.15rem; color: #d9e9fa; max-width: 520px; margin-bottom: 2rem; }
+    .hero p.lead { font-size: 1.15rem; color: #eef6ff; max-width: 520px; margin-bottom: 2rem; }
     .hero-ctas { display: flex; gap: .9rem; flex-wrap: wrap; margin-bottom: 2rem; }
     .btn {
       display: inline-block; text-decoration: none; font-weight: 800;
@@ -119,14 +140,15 @@
     .btn-amber:hover { background: #ffb424; transform: translateY(-1px); }
     .btn-ghost { border: 2px solid rgba(255,255,255,.55); color: #fff; }
     .btn-ghost:hover { background: rgba(255,255,255,.12); }
-    .hero-points { display: flex; gap: 1.4rem; flex-wrap: wrap; font-size: .9rem; color: #cfe3f7; }
+    .hero-points { display: flex; gap: 1.4rem; flex-wrap: wrap; font-size: .9rem; color: #e3f0fc; }
     .hero-points span { display: flex; align-items: center; gap: .4rem; }
+    .hero-points svg.icon { color: #ffd77a; }
 
     .hero-card {
       background: #fff; color: var(--ink); border-radius: var(--radius);
-      padding: 1.75rem; box-shadow: 0 24px 60px rgba(4,20,40,.35);
+      padding: 1.75rem; box-shadow: 0 16px 36px rgba(4,20,40,.18);
     }
-    .hero-card h3 { color: var(--navy); font-size: 1.15rem; margin-bottom: .35rem; }
+    .hero-card-title { color: var(--navy); font-size: 1.15rem; font-weight: 800; margin-bottom: .35rem; }
     .hero-card .sub { font-size: .88rem; color: var(--muted); margin-bottom: 1rem; }
     .stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; }
     .stat { background: var(--sky); border-radius: 10px; padding: .85rem; text-align: center; }
@@ -149,6 +171,7 @@
       padding: .22rem .8rem; border-radius: 999px; letter-spacing: .06em; text-transform: uppercase;
     }
     .tier-flag.gold { background: var(--amber); color: var(--navy); }
+    .tier-flag.slate { background: var(--slate); }
     .tier h3 { color: var(--navy); font-size: 1.28rem; margin: .35rem 0 .4rem; }
     .tier .tag { font-size: .82rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .07em; }
     .tier p.desc { color: var(--muted); font-size: .95rem; margin-bottom: 1.1rem; }
@@ -163,14 +186,22 @@
 
     .addl { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.1rem; }
     .addl-card { background: var(--sky); border-radius: 12px; padding: 1.3rem 1.4rem; }
-    .addl-card h4 { color: var(--navy); margin-bottom: .3rem; font-size: 1rem; }
+    .addl-card h4 {
+      color: var(--navy); margin-bottom: .3rem; font-size: 1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .addl-card h4 svg.icon { color: var(--blue); width: 1.15em; height: 1.15em; }
     .addl-card p { font-size: .88rem; color: var(--muted); }
 
     /* Why */
     .why { background: #f6fafd; }
     .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; }
     .why-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.7rem; }
-    .why-icon { font-size: 1.9rem; margin-bottom: .7rem; }
+    .why-icon {
+      width: 44px; height: 44px; border-radius: 10px; background: var(--sky);
+      color: var(--blue); display: grid; place-items: center; margin-bottom: 1rem;
+    }
+    .why-icon svg.icon { width: 22px; height: 22px; }
     .why-card h3 { font-size: 1.08rem; color: var(--navy); margin-bottom: .45rem; }
     .why-card p { font-size: .93rem; color: var(--muted); }
 
@@ -183,7 +214,8 @@
       padding: .45rem 1rem; border-radius: 999px;
     }
     .review { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.4rem; margin-bottom: 1rem; }
-    .stars { color: var(--amber); letter-spacing: .1em; margin-bottom: .5rem; }
+    .stars { display: flex; gap: .2rem; color: var(--amber); margin-bottom: .6rem; }
+    .stars svg.icon { width: 16px; height: 16px; }
     .review p { font-size: .93rem; color: var(--ink); margin-bottom: .6rem; }
     .review .who { font-size: .82rem; color: var(--muted); font-weight: 600; }
 
@@ -194,16 +226,16 @@
     .quote-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 3rem; align-items: start; }
     @media (max-width: 860px) { .quote-grid { grid-template-columns: 1fr; } }
     .quote-side h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 800; margin-bottom: 1rem; }
-    .quote-side p { color: #cfe3f7; margin-bottom: 1.4rem; }
+    .quote-side p { color: #e3f0fc; margin-bottom: 1.4rem; }
     .quote-side ul { list-style: none; }
-    .quote-side li { padding: .4rem 0 .4rem 1.8rem; position: relative; color: #e3f0fc; }
-    .quote-side li::before { content: "⚡"; position: absolute; left: 0; }
+    .quote-side li { display: flex; align-items: center; gap: .7rem; padding: .4rem 0; color: #eef6ff; }
+    .quote-side li svg.icon { color: #ffd77a; width: 1.1em; height: 1.1em; }
     .quote-call {
       margin-top: 1.8rem; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
       border-radius: 12px; padding: 1.1rem 1.3rem;
     }
-    .quote-call a { color: #ffd77a; font-weight: 800; font-size: 1.25rem; text-decoration: none; }
-    .qform { background: #fff; color: var(--ink); border-radius: var(--radius); padding: 2rem; box-shadow: 0 24px 60px rgba(4,20,40,.35); }
+    .quote-call a { color: #ffd77a; font-weight: 800; font-size: 1.25rem; text-decoration: none; display: inline-flex; align-items: center; gap: .5rem; }
+    .qform { background: #fff; color: var(--ink); border-radius: var(--radius); padding: 2rem; box-shadow: 0 16px 36px rgba(4,20,40,.18); }
     .qform h3 { color: var(--navy); margin-bottom: 1.2rem; }
     .form-row { margin-bottom: 1rem; }
     .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -229,6 +261,7 @@
       display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: 10px;
       padding: 1.5rem; text-align: center; color: #166534; font-weight: 700; margin-top: 1rem;
     }
+    #form-success svg.icon { width: 2rem; height: 2rem; margin-bottom: .5rem; color: #16a34a; }
 
     /* FAQ */
     details {
@@ -248,10 +281,11 @@
     footer { background: var(--navy); color: #9db8d2; padding: 3rem 0 2rem; }
     .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
     @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr; } }
-    footer h4 { color: #fff; font-size: .95rem; margin-bottom: .8rem; }
+    footer h3 { color: #fff; font-size: .95rem; margin-bottom: .8rem; }
     footer a { color: #cfe3f7; text-decoration: none; }
     footer a:hover { color: #fff; }
-    footer li { list-style: none; padding: .2rem 0; font-size: .9rem; }
+    footer li { list-style: none; padding: .2rem 0; font-size: .9rem; display: flex; align-items: center; gap: .5rem; }
+    footer li svg.icon { color: #7cb8ec; width: 1.05em; height: 1.05em; }
     .foot-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 1.4rem; font-size: .82rem; text-align: center; }
 
     /* Sticky mobile call button */
@@ -260,22 +294,48 @@
       background: var(--amber); color: var(--navy); text-align: center; font-weight: 800;
       padding: 1rem; border-radius: 12px; text-decoration: none;
       box-shadow: 0 10px 30px rgba(0,0,0,.3);
+      align-items: center; justify-content: center; gap: .5rem;
     }
-    @media (max-width: 640px) { .mobile-call { display: block; } body { padding-bottom: 4.5rem; } }
+    @media (max-width: 640px) { .mobile-call { display: flex; } body { padding-bottom: 4.5rem; } }
   </style>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><path class="icon-fill" fill="currentColor" stroke="none" d="M12 2.5l2.9 6 6.6.7-4.9 4.6 1.3 6.6L12 17l-5.9 3.4 1.3-6.6L2.5 9.2l6.6-.7L12 2.5z"/></symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.4 4.2-2.1 1.8a12 12 0 0 0 5.7 5.7l1.8-2.1 4.2 1.4v3a1.5 1.5 0 0 1-1.6 1.5A16 16 0 0 1 5 5.1 1.5 1.5 0 0 1 6.5 3.5z"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M4 11.5L12 4l8 7.5"/><path d="M6 10v9.5h12V10"/><path d="M10 19.5v-5h4v5"/></symbol>
+    <symbol id="icon-badge" viewBox="0 0 24 24"><circle cx="12" cy="9.5" r="6"/><path d="M9 14.5l-1.6 6L12 18l4.6 2.5-1.6-6"/></symbol>
+    <symbol id="icon-droplet" viewBox="0 0 24 24"><path d="M12 3s6.5 7.4 6.5 11.6A6.5 6.5 0 0 1 12 21a6.5 6.5 0 0 1-6.5-6.4C5.5 10.4 12 3 12 3z"/></symbol>
+    <symbol id="icon-cactus" viewBox="0 0 24 24"><path d="M12 21V7"/><path d="M12 12H8.5a2 2 0 0 1-2-2V7"/><path d="M8.5 7v2"/><path d="M12 9h3.5a2 2 0 0 1 2 2v3"/><path d="M15.5 14v2"/></symbol>
+    <symbol id="icon-bolt" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.7-3 8.4-7 9.5-4-1.1-7-4.8-7-9.5V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></symbol>
+    <symbol id="icon-leaf" viewBox="0 0 24 24"><path d="M20 4c0 9-5.5 15-13 15H4v-3C4 8 10 4 20 4z"/><path d="M6.5 17.5C10 13 13.5 10 18 7.5"/></symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15 14a4.5 4.5 0 0 1 5.5 4.4"/></symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24"><rect x="4" y="4" width="10" height="16" rx="1"/><path d="M14 9h5v11h-5"/><path d="M7 8h1M10 8h1M7 12h1M10 12h1M7 16h1M10 16h1"/></symbol>
+    <symbol id="icon-spray" viewBox="0 0 24 24"><path d="M4 20l6-6"/><path d="M10 14l4-4a2.8 2.8 0 0 1 4 0l1 1a2.8 2.8 0 0 1 0 4l-4 4"/><path d="M17 5l1.4-1.4M20 8l1.4-1.4M15 3l.7-1.9"/></symbol>
+    <symbol id="icon-hammer" viewBox="0 0 24 24"><path d="M14 7l3-3 4 4-3 3"/><path d="M14.5 9.5L5 19l-2-2 9.5-9.5z"/><path d="M11 6l3 3"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="15" rx="1.5"/><path d="M4 10h16"/><path d="M8 3.5v3M16 3.5v3"/></symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="1.5"/><path d="M4 6.5l8 6.5 8-6.5"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2"/></symbol>
+    <symbol id="icon-check-circle" viewBox="0 0 24 24"><circle class="icon-fill" fill="currentColor" stroke="none" cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="icon-squeegee" viewBox="0 0 24 24"><path class="icon-fill" fill="currentColor" stroke="none" d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6L12 3z"/></symbol>
+  </defs>
+</svg>
+
 <div class="topbar">
-  <span>📍 Serving Greater Tucson &amp; Surrounding Areas</span>
-  <span>⭐ 5.0 Rating • 500+ Happy Customers • <a href="tel:+15205805700">📞 (520) 580-5700</a></span>
+  <span><svg class="icon"><use href="#icon-pin"/></svg> Serving Greater Tucson &amp; Surrounding Areas</span>
+  <span><svg class="icon icon-fill"><use href="#icon-star"/></svg> 5.0 Rating • 500+ Happy Customers • <a href="tel:+15205805700"><svg class="icon"><use href="#icon-phone"/></svg> (520) 580-5700</a></span>
 </div>
 
 <nav>
   <div class="nav-inner">
     <a href="#" class="brand">
-      <span class="brand-mark">🧽</span>
-      <span class="brand-name">Squeegee<span>Guy</span></span>
+      <span class="brand-mark"><svg class="icon icon-fill"><use href="#icon-squeegee"/></svg></span>
+      <span class="brand-name">Squeegee <span>Guy</span></span>
     </a>
     <div class="nav-links">
       <a href="#services">Services</a>
@@ -291,22 +351,22 @@
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="hero-kicker">🌵 Tucson's Trusted Window Cleaning Pro</span>
+      <span class="hero-kicker"><svg class="icon"><use href="#icon-cactus"/></svg> Tucson's Trusted Window Cleaning Pro</span>
       <h1>Crystal-Clear Windows, <em>Zero Hassle.</em></h1>
       <p class="lead">Professional window cleaning and pressure washing for Tucson homes and businesses. One call, one guy, one guarantee: sparkling results every time.</p>
       <div class="hero-ctas">
         <a href="#quote" class="btn btn-amber">Get My Free Quote →</a>
-        <a href="tel:+15205805700" class="btn btn-ghost">📞 (520) 580-5700</a>
+        <a href="tel:+15205805700" class="btn btn-ghost"><svg class="icon"><use href="#icon-phone"/></svg> (520) 580-5700</a>
       </div>
       <div class="hero-points">
-        <span>✓ Fully Insured</span>
-        <span>★ 5-Star Rated</span>
-        <span>🏠 Local &amp; Family-Owned</span>
-        <span>💯 Satisfaction Guaranteed</span>
+        <span><svg class="icon"><use href="#icon-check"/></svg> Fully Insured</span>
+        <span><svg class="icon icon-fill"><use href="#icon-star"/></svg> 5-Star Rated</span>
+        <span><svg class="icon"><use href="#icon-home"/></svg> Local &amp; Family-Owned</span>
+        <span><svg class="icon"><use href="#icon-badge"/></svg> Satisfaction Guaranteed</span>
       </div>
     </div>
     <div class="hero-card">
-      <h3>Why neighbors call us first</h3>
+      <p class="hero-card-title">Why neighbors call us first</p>
       <p class="sub">Most quotes delivered within 2 hours. Same-day service available.</p>
       <div class="stat-row">
         <div class="stat"><b>500+</b><small>Happy Customers</small></div>
@@ -320,12 +380,11 @@
 
 <section id="services">
   <div class="wrap">
-    <p class="section-label">Our Services</p>
     <h2 class="section-title">Packages for Every Home &amp; Business</h2>
-    <p class="section-sub">From basic exterior washes to full glass restoration, pick the package that fits — or let us recommend one when we quote your job.</p>
+    <p class="section-sub">From basic exterior washes to full glass restoration, pick the package that fits, or let us recommend one when we quote your job.</p>
     <div class="svc-grid">
       <div class="tier">
-        <span class="tier-flag" style="background:#64748b">Essential</span>
+        <span class="tier-flag slate">Essential</span>
         <p class="tag">Tier 1</p>
         <h3>Complete Clean</h3>
         <p class="desc">Our most popular package for homeowners who want sparkling results inside and out.</p>
@@ -356,7 +415,7 @@
         <span class="tier-flag gold">Platinum</span>
         <p class="tag">Top Tier</p>
         <h3>Restoration</h3>
-        <p class="desc">For tough jobs requiring specialized treatment — hard water and paint overspray removal.</p>
+        <p class="desc">For tough jobs requiring specialized treatment: hard water and paint overspray removal.</p>
         <ul>
           <li>Everything in Tier 2</li>
           <li>Hard water stain removal</li>
@@ -368,26 +427,25 @@
       </div>
     </div>
     <div class="addl">
-      <div class="addl-card"><h4>🏢 Commercial Window Cleaning</h4><p>Storefronts, restaurants, offices, dealerships, and medical buildings. Recurring maintenance programs available.</p></div>
-      <div class="addl-card"><h4>💦 Pressure Washing</h4><p>Sidewalks, patios, driveways, building facades, dumpster pads, and drive-throughs.</p></div>
-      <div class="addl-card"><h4>🏗️ Post-Construction Cleanup</h4><p>Debris, stickers, and residue removed from new or renovated properties.</p></div>
-      <div class="addl-card"><h4>📅 Scheduled Maintenance</h4><p>Monthly, quarterly, or annual plans with priority scheduling and discounted rates.</p></div>
+      <div class="addl-card"><h4><svg class="icon"><use href="#icon-building"/></svg> Commercial Window Cleaning</h4><p>Storefronts, restaurants, offices, dealerships, and medical buildings. Recurring maintenance programs available.</p></div>
+      <div class="addl-card"><h4><svg class="icon"><use href="#icon-spray"/></svg> Pressure Washing</h4><p>Sidewalks, patios, driveways, building facades, dumpster pads, and drive-throughs.</p></div>
+      <div class="addl-card"><h4><svg class="icon"><use href="#icon-hammer"/></svg> Post-Construction Cleanup</h4><p>Debris, stickers, and residue removed from new or renovated properties.</p></div>
+      <div class="addl-card"><h4><svg class="icon"><use href="#icon-calendar"/></svg> Scheduled Maintenance</h4><p>Monthly, quarterly, or annual plans with priority scheduling and discounted rates.</p></div>
     </div>
   </div>
 </section>
 
 <section class="why" id="why">
   <div class="wrap">
-    <p class="section-label">Why Squeegee Guy</p>
     <h2 class="section-title">Why Tucson Trusts Squeegee Guy</h2>
-    <p class="section-sub">We're not just another window cleaning service — we're your reliable local pro, committed to making every pane shine.</p>
+    <p class="section-sub">We're not just another window cleaning service. We're your reliable local pro, committed to making every pane shine.</p>
     <div class="why-grid">
-      <div class="why-card"><div class="why-icon">💧</div><h3>Hard Water Specialists</h3><p>Tucson's hard water doesn't stand a chance. Specialized treatments remove stubborn mineral deposits and restore clarity to your glass.</p></div>
-      <div class="why-card"><div class="why-icon">🌵</div><h3>Desert-Tested Methods</h3><p>Techniques designed for Tucson's climate — from monsoon dust to intense sun exposure, your windows stay pristine year-round.</p></div>
-      <div class="why-card"><div class="why-icon">⚡</div><h3>Same-Day Service Available</h3><p>Need it done fast? Same-day and next-day service for urgent requests throughout the Tucson metro area.</p></div>
-      <div class="why-card"><div class="why-icon">🛡️</div><h3>100% Satisfaction Guarantee</h3><p>Not completely satisfied? We'll return and make it right — no questions asked. Your happiness is the mission.</p></div>
-      <div class="why-card"><div class="why-icon">♻️</div><h3>Eco-Friendly Products</h3><p>Biodegradable, safe cleaning solutions that protect your family, pets, and our beautiful Sonoran Desert.</p></div>
-      <div class="why-card"><div class="why-icon">👥</div><h3>Trusted Professionals</h3><p>Background-checked, uniformed, respectful of your home. We build relationships, not just clean windows.</p></div>
+      <div class="why-card"><div class="why-icon"><svg class="icon"><use href="#icon-droplet"/></svg></div><h3>Hard Water Specialists</h3><p>Tucson's hard water doesn't stand a chance. Specialized treatments remove stubborn mineral deposits and restore clarity to your glass.</p></div>
+      <div class="why-card"><div class="why-icon"><svg class="icon"><use href="#icon-cactus"/></svg></div><h3>Desert-Tested Methods</h3><p>Techniques designed for Tucson's climate, from monsoon dust to intense sun exposure, so your windows stay pristine year-round.</p></div>
+      <div class="why-card"><div class="why-icon"><svg class="icon"><use href="#icon-bolt"/></svg></div><h3>Same-Day Service Available</h3><p>Need it done fast? Same-day and next-day service for urgent requests throughout the Tucson metro area.</p></div>
+      <div class="why-card"><div class="why-icon"><svg class="icon"><use href="#icon-shield"/></svg></div><h3>100% Satisfaction Guarantee</h3><p>Not completely satisfied? We'll return and make it right, no questions asked. Your happiness is the mission.</p></div>
+      <div class="why-card"><div class="why-icon"><svg class="icon"><use href="#icon-leaf"/></svg></div><h3>Eco-Friendly Products</h3><p>Biodegradable, safe cleaning solutions that protect your family, pets, and our beautiful Sonoran Desert.</p></div>
+      <div class="why-card"><div class="why-icon"><svg class="icon"><use href="#icon-users"/></svg></div><h3>Trusted Professionals</h3><p>Background-checked, uniformed, respectful of your home. We build relationships, not just clean windows.</p></div>
     </div>
   </div>
 </section>
@@ -395,9 +453,8 @@
 <section id="areas">
   <div class="wrap areas-flex">
     <div>
-      <p class="section-label">Local Roots</p>
       <h2 class="section-title">Proud to Serve the Old Pueblo</h2>
-      <p style="color:var(--muted);margin-bottom:1rem">Born and raised in Tucson, we understand the unique challenges our desert climate throws at your glass — monsoon dust that coats everything, hard water that etches minerals into every pane. We've built our methods around exactly that.</p>
+      <p style="color:var(--muted);margin-bottom:1rem">Born and raised in Tucson, we understand the unique challenges our desert climate throws at your glass: monsoon dust that coats everything, hard water that etches minerals into every pane. We've built our methods around exactly that.</p>
       <p style="color:var(--muted)">When you choose Squeegee Guy, you're supporting a local, family-owned business invested in this community's success.</p>
       <div class="area-chips">
         <span class="chip">Central Tucson</span>
@@ -412,20 +469,19 @@
       <p style="margin-top:1.2rem;font-size:.92rem;color:var(--muted)">Not sure if we serve your area? <a href="tel:+15205805700" style="color:var(--blue);font-weight:700">Give us a call!</a></p>
     </div>
     <div>
-      <p class="section-label">Reviews</p>
       <h2 class="section-title" style="font-size:1.6rem">What Your Neighbors Say</h2>
       <div class="review">
-        <div class="stars">★★★★★</div>
+        <div class="stars"><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg></div>
         <p>"Living in the Foothills, our windows take a beating from dust storms. They removed years of hard water buildup and now our mountain views are crystal clear."</p>
         <div class="who">Sarah M. • Catalina Foothills</div>
       </div>
       <div class="review">
-        <div class="stars">★★★★★</div>
+        <div class="stars"><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg></div>
         <p>"Professional, punctual, and perfect results. Cleaned 32 windows and even repaired a screen at no extra charge. The kind of service Tucson needs more of!"</p>
         <div class="who">Robert T. • Oro Valley</div>
       </div>
       <div class="review">
-        <div class="stars">★★★★★</div>
+        <div class="stars"><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg><svg class="icon icon-fill"><use href="#icon-star"/></svg></div>
         <p>"I was skeptical about hard water removal, but wow! Windows I thought were permanently damaged look brand new. Highly recommend the Top Tier package."</p>
         <div class="who">Jennifer L. • Central Tucson</div>
       </div>
@@ -438,16 +494,16 @@
     <div class="quote-side">
       <p class="section-label" style="color:#ffd77a">Free Quote</p>
       <h2>Book Your Clean in 60 Seconds</h2>
-      <p>Tell us about your windows and we'll get back fast — usually with open appointment times you can grab right from your inbox.</p>
+      <p>Tell us about your windows and we'll get back fast, usually with open appointment times you can grab right from your inbox.</p>
       <ul>
-        <li>Most quotes delivered within 2 hours</li>
-        <li>No pressure, no obligation</li>
-        <li>Same-day service often available</li>
-        <li>Reply to our email to lock in a time — done</li>
+        <li><svg class="icon"><use href="#icon-bolt"/></svg> Most quotes delivered within 2 hours</li>
+        <li><svg class="icon"><use href="#icon-bolt"/></svg> No pressure, no obligation</li>
+        <li><svg class="icon"><use href="#icon-bolt"/></svg> Same-day service often available</li>
+        <li><svg class="icon"><use href="#icon-bolt"/></svg> Reply to our email to lock in a time, done</li>
       </ul>
       <div class="quote-call">
         Prefer to talk? Call or text<br />
-        <a href="tel:+15205805700">📞 (520) 580-5700</a>
+        <a href="tel:+15205805700"><svg class="icon"><use href="#icon-phone"/></svg> (520) 580-5700</a>
       </div>
     </div>
     <div>
@@ -489,7 +545,7 @@
               <option value="post_construction">Post-Construction Cleanup</option>
               <option value="recurring">Recurring Maintenance Plan</option>
               <option value="both">Windows + Pressure Washing</option>
-              <option value="not_sure">Not Sure — Recommend Something</option>
+              <option value="not_sure">Not Sure (Recommend Something)</option>
             </select>
           </div>
         </div>
@@ -498,10 +554,11 @@
           <textarea id="message" name="message" placeholder="Number of windows, square footage, preferred days/times, gate codes, dogs in yard…"></textarea>
         </div>
         <button type="submit" class="form-submit">Send My Quote Request →</button>
-        <p class="form-note">We reply fast — usually with bookable time slots. No spam, ever.</p>
+        <p class="form-note">We reply fast, usually with bookable time slots. No spam, ever.</p>
       </form>
       <div id="form-success">
-        ✅ Got it! Check your email — we'll reply shortly with your quote and open appointment times.
+        <svg class="icon"><use href="#icon-check-circle"/></svg><br />
+        Got it! Check your email, we'll reply shortly with your quote and open appointment times.
       </div>
     </div>
   </div>
@@ -509,7 +566,6 @@
 
 <section id="faq">
   <div class="wrap" style="max-width:820px">
-    <p class="section-label">FAQ</p>
     <h2 class="section-title">Frequently Asked Questions</h2>
     <details>
       <summary>How often should I have my windows professionally cleaned in Tucson?</summary>
@@ -525,19 +581,19 @@
     </details>
     <details>
       <summary>Are your cleaning products safe for pets and children?</summary>
-      <p>Yes — all our solutions are eco-friendly, biodegradable, and completely safe for your family and pets, with no harm to the desert ecosystem.</p>
+      <p>Yes. All our solutions are eco-friendly, biodegradable, and completely safe for your family and pets, with no harm to the desert ecosystem.</p>
     </details>
     <details>
       <summary>How long does a typical appointment take?</summary>
-      <p>For an average Tucson home (2,000–2,500 sq ft, 20–30 windows), our Tier 1 service takes 2–3 hours. Larger homes or more comprehensive packages may take longer — we'll give you a timeframe with your quote.</p>
+      <p>For an average Tucson home (2,000–2,500 sq ft, 20–30 windows), our Tier 1 service takes 2–3 hours. Larger homes or more comprehensive packages may take longer, and we'll give you a timeframe with your quote.</p>
     </details>
     <details>
       <summary>Do I need to be home during the cleaning?</summary>
-      <p>Not necessarily! For exterior-only service, you don't need to be home at all. For interior cleaning, we can arrange access that works for your schedule — we'll sort out details when you book.</p>
+      <p>Not necessarily! For exterior-only service, you don't need to be home at all. For interior cleaning, we can arrange access that works for your schedule and sort out details when you book.</p>
     </details>
     <details>
       <summary>How does booking work?</summary>
-      <p>Submit the quote form (or email us) and you'll get a reply with real open appointment times. Reply with the one that works and it's booked — you'll receive a confirmation with a calendar invite. No phone tag required.</p>
+      <p>Submit the quote form (or email us) and you'll get a reply with real open appointment times. Reply with the one that works and it's booked: you'll receive a confirmation with a calendar invite. No phone tag required.</p>
     </details>
   </div>
 </section>
@@ -547,8 +603,8 @@
     <h2 class="section-title">Ready for Sparkling Clean Windows?</h2>
     <p style="color:var(--muted);margin-bottom:1.5rem">Free, no-obligation quotes. Same-day service available.</p>
     <a href="#quote" class="btn btn-blue">Get My Instant Online Quote</a>
-    <a href="tel:+15205805700" class="btn btn-outline">📞 Call (520) 580-5700</a>
-    <p style="margin-top:1.2rem;font-size:.88rem;color:var(--muted)">⚡ Most quotes delivered within 2 hours • ✓ No pressure, no obligation</p>
+    <a href="tel:+15205805700" class="btn btn-outline"><svg class="icon"><use href="#icon-phone"/></svg> Call (520) 580-5700</a>
+    <p style="margin-top:1.2rem;font-size:.88rem;color:var(--muted)">Most quotes delivered within 2 hours • No pressure, no obligation</p>
   </div>
 </section>
 
@@ -557,13 +613,13 @@
     <div class="foot-grid">
       <div>
         <div class="brand" style="margin-bottom:.8rem">
-          <span class="brand-mark">🧽</span>
-          <span class="brand-name" style="color:#fff">Squeegee<span style="color:#7cb8ec">Guy</span></span>
+          <span class="brand-mark"><svg class="icon icon-fill"><use href="#icon-squeegee"/></svg></span>
+          <span class="brand-name" style="color:#fff">Squeegee <span style="color:#7cb8ec">Guy</span></span>
         </div>
         <p style="font-size:.9rem;max-width:320px">Your guy for crystal-clear views. Professional window cleaning and pressure washing across greater Tucson.</p>
       </div>
       <div>
-        <h4>Services</h4>
+        <h3>Services</h3>
         <ul>
           <li><a href="#services">Residential Window Cleaning</a></li>
           <li><a href="#services">Commercial Window Cleaning</a></li>
@@ -573,12 +629,12 @@
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h3>Contact</h3>
         <ul>
-          <li><a href="tel:+15205805700">📞 (520) 580-5700</a></li>
-          <li><a href="mailto:chip@squeegeeguy.com">✉️ chip@squeegeeguy.com</a></li>
-          <li>📍 Tucson, AZ</li>
-          <li>🕗 Mon–Sat, 8 AM – 5 PM</li>
+          <li><a href="tel:+15205805700"><svg class="icon"><use href="#icon-phone"/></svg> (520) 580-5700</a></li>
+          <li><a href="mailto:chip@squeegeeguy.com"><svg class="icon"><use href="#icon-mail"/></svg> chip@squeegeeguy.com</a></li>
+          <li><svg class="icon"><use href="#icon-pin"/></svg> Tucson, AZ</li>
+          <li><svg class="icon"><use href="#icon-clock"/></svg> Mon–Sat, 8 AM – 5 PM</li>
         </ul>
       </div>
     </div>
@@ -588,7 +644,7 @@
   </div>
 </footer>
 
-<a href="tel:+15205805700" class="mobile-call">📞 Tap to Call (520) 580-5700</a>
+<a href="tel:+15205805700" class="mobile-call"><svg class="icon"><use href="#icon-phone"/></svg> Tap to Call (520) 580-5700</a>
 
 <script>
   // Point this at the machine running `uv run python inbound.py`
